@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <script src="./js/echarts.js"></script>
+    <script src="./js/jquery.js"></script>
+    <script>
+        //设置rem为10
+        $(function() {
+            initpage(); //根据设备变更字体大小
+            $(window).resize(function() {
+                initpage();
+            })
+
+            function initpage() {
+                var view_width = document.getElementsByTagName('html')[0].getBoundingClientRect().width;
+                var _html = document.getElementsByTagName('html')[0];
+                _html.style.fontSize = (view_width / 375) * 100 + 'px';
+            }
+        })
+    </script>
+</head>
+<style>
+    /* rem为10px */
+    /* .backgroundImg {
+        width: 100%;
+        height: 16rem;
+    } */
+    
+    .head {
+        width: 100%;
+        height: 1.6rem;
+        text-align: center;
+        overflow: hidden;
+        background-image: url("./images/background.jpg");
+        background-position: left bottom;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        color: #fff;
+    }
+    
+    .headTop {
+        height: 62%;
+        position: relative;
+    }
+    
+    .headButton {
+        height: 35%;
+    }
+    
+    .avatar {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        position: absolute;
+        top: 0.15rem;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .head_name {
+        font-size: 0.19rem;
+        font-weight: 700;
+        line-height: 0.3rem;
+        height: 0.3rem;
+        text-shadow: 2px 2px 3px #000
+    }
+    
+    .head_department {
+        font-size: 0.15rem;
+        text-shadow: 2px 2px 3px #000
+    }
+    
+    .main {
+        margin: 0 0.25rem;
+        text-align: center;
+    }
+    
+    .target {
+        border-bottom: 1px solid #f1f1f1;
+        height: 1rem;
+    }
+    
+    .finish {
+        width: 50%;
+        height: 1rem;
+        line-height: 1rem;
+        float: left;
+    }
+    
+    .stepNum {
+        float: left;
+        width: 50%;
+        height: 1rem;
+        font-size: .2rem;
+        text-align: center;
+        line-height: 1rem;
+        color: #6d6d6d;
+    }
+    
+    .step {
+        font-size: .32rem;
+        color: #403838;
+    }
+    
+    .rank {
+        padding: 0.12rem 0;
+        height: 0.82rem;
+        /* background-color: red; */
+        box-sizing: border-box;
+        color: #6d6d6d;
+        font-size: inherit;
+        margin-bottom: .1rem;
+    }
+    
+    .team {
+        box-sizing: border-box;
+        border-right: 1px solid #f1f1f1;
+        width: 50%;
+        height: 100%;
+        float: left;
+        /* background-color: green; */
+    }
+    
+    .total {
+        width: 50%;
+        height: 100%;
+        float: left;
+    }
+    
+    .rank p.title {
+        font-size: .16rem;
+        margin-bottom: .1rem;
+    }
+    
+    .rank p.content {
+        font-size: .15rem;
+    }
+    
+    .rankNum {
+        font-size: .3rem;
+        color: #585454;
+    }
+    
+    .chart {
+        margin: 0 .1rem;
+        height: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0px 0px 9px #d6d1d1;
+    }
+    
+    #line-chart {}
+</style>
+
+<body>
+    <div class="head">
+        <!-- <img class="backgroundImg" src="./images/background.jpg" alt="背景图片"> -->
+        <div class="headTop"><img src="./images/avatar.jpg" alt="" class="avatar"></div>
+        <div class="headButton">
+            <p class="head_name">刘晶</p>
+            <p class="head_department">腾讯技术组</p>
+        </div>
+
+    </div>
+    <div class="main">
+        <div class="target">
+            <div class="finish"></div>
+            <div class="stepNum">
+                <p>
+                    <span class="step">4321</span>步
+                </p>
+            </div>
+        </div>
+        <div class="rank">
+            <div class="team">
+                <p class="title">团队内排名</p>
+                <p class="content">第 <span class="rankNum">9</span> 名</p>
+            </div>
+            <div class="total">
+                <p class="title">总排名</p>
+                <p class="content">第
+                    <span class="rankNum">12</span> 名</p>
+            </div>
+        </div>
+    </div>
+    <div class="chart">
+        <div id="line-chart" style="height: 260px;width: 350px;"></div>
+    </div>
+    <script>
+        var myChart = echarts.init(document.getElementById('line-chart'));
+        option = {
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: ['我的步数', '团队平均', '全员平均']
+            },
+
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [{
+                type: 'category',
+                boundaryGap: false,
+                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            }],
+            yAxis: [{
+                type: 'value'
+            }],
+            series: [{
+                name: '我的步数',
+                type: 'line',
+                areaStyle: {
+                    normal: {}
+                },
+                data: [120, 132, 101,
+                    134, 90, 580, 210
+                ]
+            }, {
+                name: '团队平均',
+                type: 'line',
+                areaStyle: {
+                    normal: {}
+                },
+                data: [220, 182, 191, 234, 290, 360, 310]
+            }, {
+                name: '全员平均',
+                type: 'line',
+                areaStyle: {
+                    normal: {}
+                },
+                data: [150, 232, 201, 154, 630, 330, 410]
+            }, ]
+        };
+
+        myChart.setOption(option)
+    </script>
+</body>
+
+</html>
