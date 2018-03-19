@@ -11,18 +11,16 @@
     <script src="./js/jquery.js"></script>
     <script>
         //设置rem为10
-        $(function() {
-            initpage(); //根据设备变更字体大小
-            $(window).resize(function() {
-                initpage();
-            })
-
-            function initpage() {
-                var view_width = document.getElementsByTagName('html')[0].getBoundingClientRect().width;
-                var _html = document.getElementsByTagName('html')[0];
-                _html.style.fontSize = (view_width / 375) * 100 + 'px';
-            }
+        initpage(); //根据设备变更字体大小
+        $(window).resize(function() {
+            initpage();
         })
+
+        function initpage() {
+            var view_width = document.getElementsByTagName('html')[0].getBoundingClientRect().width;
+            var _html = document.getElementsByTagName('html')[0];
+            _html.style.fontSize = (view_width / 375) * 100 + 'px';
+        }
     </script>
 </head>
 <style>
@@ -37,7 +35,8 @@
         height: 1.6rem;
         text-align: center;
         overflow: hidden;
-        background-image: url("./images/background.jpg");
+        /* background-image: url("./images/background.jpg"); */
+        background-color: #000;
         background-position: left bottom;
         background-size: 100%;
         background-repeat: no-repeat;
@@ -61,6 +60,7 @@
         top: 0.15rem;
         left: 50%;
         transform: translateX(-50%);
+        font-size: .16rem;
     }
     
     .head_name {
@@ -91,6 +91,13 @@
         height: 1rem;
         line-height: 1rem;
         float: left;
+        text-align: center;
+    }
+    
+    .finish div {
+        margin: 0 auto;
+        height: 1rem;
+        width: 1rem;
     }
     
     .stepNum {
@@ -153,38 +160,39 @@
         border-radius: 15px;
         box-shadow: 0px 0px 9px #d6d1d1;
     }
-    
-    #line-chart {}
 </style>
 
 <body>
-    <div class="head">
+    <!-- <div style="height:56px;background-color:#000;"></div> -->
+    <div class="head" id="head">
         <!-- <img class="backgroundImg" src="./images/background.jpg" alt="背景图片"> -->
-        <div class="headTop"><img src="./images/avatar.jpg" alt="" class="avatar"></div>
+        <div class="headTop"><img src="./images/11.png" alt="头像" class="avatar" id="avatar"></div>
         <div class="headButton">
-            <p class="head_name">刘晶</p>
-            <p class="head_department">腾讯技术组</p>
+            <p class="head_name" id="head_name">姓名</p>
+            <p class="head_department" id="head_department">部门</p>
         </div>
 
     </div>
     <div class="main">
         <div class="target">
-            <div class="finish"></div>
+            <div class="finish" id="finish">
+                <div id="pie-chart" style="height:100px;width:100px;"></div>
+            </div>
             <div class="stepNum">
                 <p>
-                    <span class="step">4321</span>步
+                    <span class="step" id="step">？</span>步
                 </p>
             </div>
         </div>
         <div class="rank">
             <div class="team">
                 <p class="title">团队内排名</p>
-                <p class="content">第 <span class="rankNum">9</span> 名</p>
+                <p class="content">第 <span class="rankNum" id="rankNum">？</span> 名</p>
             </div>
             <div class="total">
                 <p class="title">总排名</p>
                 <p class="content">第
-                    <span class="rankNum">12</span> 名</p>
+                    <span class="rankNum" id="totalNum">？</span> 名</p>
             </div>
         </div>
     </div>
@@ -192,6 +200,16 @@
         <div id="line-chart" style="height: 260px;width: 350px;"></div>
     </div>
     <script>
+        console.log($("#finish").height())
+        var myChartContainer = function() {
+            $('#line-chart').width($(".chart").width());
+            $('#line-chart').height($(".chart").height());
+
+            $('#pie-chart').height($("#finish").height());
+            // $("#pie-chart").width($("#pie-chart").height());
+        };
+        myChartContainer();
+        //折线图
         var myChart = echarts.init(document.getElementById('line-chart'));
         option = {
 
@@ -200,55 +218,336 @@
                 axisPointer: {
                     type: 'cross',
                     label: {
-                        backgroundColor: '#6a7985'
+                        // backgroundColor: '#6a7985'
                     }
                 }
             },
             legend: {
-                data: ['我的步数', '团队平均', '全员平均']
-            },
+                data: [{
+                    name: "我的步数",
 
+                }, {
+                    name: "团队平均",
+
+                }, {
+                    name: "全员平均",
+
+                }],
+                top: 10,
+            },
+            // 网格
             grid: {
                 left: '3%',
                 right: '4%',
-                bottom: '3%',
-                containLabel: true
+                bottom: '4%',
+                containLabel: true,
             },
             xAxis: [{
                 type: 'category',
                 boundaryGap: false,
-                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                data: [],
+                axisLine: {
+                    show: false,
+                    onZero: false
+                },
+                axisTick: {
+                    show: false
+                },
+                splitLine: {
+                    show: false
+                }
             }],
             yAxis: [{
-                type: 'value'
+                type: 'value',
+                axisLine: {
+                    show: false,
+                    onZero: false
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    showMinLabel: false
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#f1f1f1'
+                    }
+
+                },
+                scale: true,
+                minInterval: 2000
             }],
             series: [{
-                name: '我的步数',
-                type: 'line',
-                areaStyle: {
-                    normal: {}
-                },
-                data: [120, 132, 101,
-                    134, 90, 580, 210
-                ]
-            }, {
                 name: '团队平均',
                 type: 'line',
+                symbol: "none",
                 areaStyle: {
-                    normal: {}
+                    normal: {
+                        color: '#9ba0ef',
+                        opacity: .5
+                    }
                 },
-                data: [220, 182, 191, 234, 290, 360, 310]
+                lineStyle: {
+                    normal: {
+                        color: '#575ecb',
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: '#575ecb',
+                        width: 1
+                    }
+                },
+                z: 1,
+                data: []
             }, {
                 name: '全员平均',
                 type: 'line',
+                symbol: "none",
                 areaStyle: {
-                    normal: {}
+                    normal: {
+                        color: '#a2f9ae',
+                        opacity: .5
+                    }
                 },
-                data: [150, 232, 201, 154, 630, 330, 410]
+                lineStyle: {
+                    normal: {
+                        color: '#45c957',
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: '#45c957',
+                        width: 1
+                    }
+                },
+                z: 1,
+                data: []
+            }, {
+                name: '我的步数',
+                type: 'line',
+                symbol: "none",
+                areaStyle: {
+                    normal: {
+                        color: '#f97a7a',
+                        opacity: .5
+                    }
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#e45652',
+                        width: 3
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: '#e45652',
+                    }
+                },
+                z: 1,
+                data: []
             }, ]
         };
 
-        myChart.setOption(option)
+        myChart.setOption(option);
+
+        //圆饼图
+        var myChartPie = echarts.init(document.getElementById('pie-chart'));
+
+        option_pie = {
+            // 提示框
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)"
+            },
+            legend: {
+                show: false,
+                orient: 'vertical',
+                x: 'left',
+                data: ['目标完成', '未完成']
+            },
+            series: [{
+                name: '目标完成',
+                type: 'pie',
+                radius: ['65%', '87%'], //饼图的半径，数组的第一项是内半径，第二项是外半径。
+                avoidLabelOverlap: false, //不重叠
+                center: ['50%', '50%'], //中心点位置
+                selectedOffset: 0,
+                hoverOffset: 5,
+                silent: true,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center',
+                        textStyle: {
+                            fontSize: '14',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                data: [{
+                    // value: 2000,
+                    name: '目标完成',
+                    itemStyle: {
+                        normal: {
+                            color: '#5a78ef',
+                        },
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            formatter: "{b}\n{d}%",
+                            verticalAlign: 'center'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '14',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },
+                    selected: true
+                }, {
+                    // value: 8000,
+                    name: '未完成',
+                    itemStyle: {
+                        normal: {
+                            color: '#e1e8ee'
+                        }
+                    }
+                }]
+            }]
+        };
+        myChartPie.setOption(option_pie);
+        console.log($(".chart").width())
+
+        $(window).resize(function() {
+                myChartContainer();
+                myChart.resize();
+                myChartPie.resize()
+            })
+            //异步加载
+        myChartPie.showLoading({
+            text: '',
+            color: '#4b75ec'
+
+        });
+        myChart.showLoading({
+            color: '#4b75ec'
+        });
+
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        }
+        var id_i = GetQueryString('id');
+        $.get('http://work.zjqq.mobi/sport/pdetail?id=' + id_i).done(function(res) {
+            var data = JSON.parse(res)
+            $('title').text(data.name + "的个人主页")
+            myChartPie.hideLoading();
+            myChart.hideLoading();
+            // console.log(data.today.finish)
+            $("#step").text(data.step); //动态 修改步数
+            $("#rankNum").text(data.grank); //动态 修改团队内排名
+            $("#totalNum").text(data.prank); //动态 修改总排名
+            $("#avatar").attr("src", data.headimg); //动态 修改头像地址
+            $("#head_name").text(data.name); //动态 修改姓名
+            $("#head_department").text(data.group); //动态 修改部门
+            $("#head").css('background-image', 'url(' + data.cover + ')'); //动态 修改背景图片路径
+            myChart.setOption({
+                xAxis: {
+                    data: [data.data.date[0],
+                        data.data.date[1],
+                        data.data.date[2],
+                        data.data.date[3],
+                        data.data.date[4],
+                        data.data.date[5],
+                        data.data.date[6]
+                    ]
+                },
+                series: [{
+                    name: '团队平均',
+                    type: 'line',
+                    data: [data.data.step.group[0],
+                        data.data.step.group[1],
+                        data.data.step.group[2],
+                        data.data.step.group[3],
+                        data.data.step.group[4],
+                        data.data.step.group[5],
+                        data.data.step.group[6],
+                    ]
+                }, {
+                    name: '全员平均',
+                    type: 'line',
+                    data: [data.data.step.all[0],
+                        data.data.step.all[1],
+                        data.data.step.all[2],
+                        data.data.step.all[3],
+                        data.data.step.all[4],
+                        data.data.step.all[5],
+                        data.data.step.all[6],
+                    ]
+                }, {
+                    name: '我的步数',
+                    type: 'line',
+                    data: [data.data.step.self[0],
+                        data.data.step.self[1],
+                        data.data.step.self[2],
+                        data.data.step.self[3],
+                        data.data.step.self[4],
+                        data.data.step.self[5],
+                        data.data.step.self[6],
+                    ]
+                }]
+            });
+            myChartPie.setOption({
+                series: [{
+                    name: "目标完成",
+                    data: [{
+                        name: "目标完成",
+                        value: data.step,
+                        itemStyle: {
+                            normal: {
+                                color: '#5a78ef',
+                            },
+                        },
+                        label: {
+                            normal: {
+                                show: true,
+                                formatter: "{b}\n{d}%",
+                                verticalAlign: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '14',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        selected: true
+                    }, {
+                        name: "未完成",
+                        value: 10000 - data.step,
+                        itemStyle: {
+                            normal: {
+                                color: '#e1e8ee'
+                            }
+                        }
+                    }]
+                }]
+            })
+
+        })
     </script>
 </body>
 
